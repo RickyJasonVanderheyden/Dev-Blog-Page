@@ -1,0 +1,79 @@
+import axios from 'axios';
+import { authUtils } from './auth';
+import type { LoginCredentials, RegisterData, CreatePostData } from './types';
+
+const api = axios.create({
+  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+api.interceptors.request.use((config) => {
+  const token = authUtils.getToken();
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  }
+  return config;
+});
+
+export const authApi = {
+  login: (credentials: LoginCredentials) => api.post('/auth/login', credentials),
+  register: (data: RegisterData) => api.post('/auth/register', data),
+  updateProfile: (data: { username?: string; email?: string; avatar?: string }) => 
+    api.put('/auth/profile', data),
+};
+
+export const postsApi = {
+  getAll: () => api.get('/posts'),
+  getById: (id: string) => api.get(`/posts/${id}`),
+  create: (data: CreatePostData) => api.post('/posts', data),
+  update: (id: string, data: CreatePostData) => api.put(`/posts/${id}`, data),
+  delete: (id: string) => api.delete(`/posts/${id}`),
+  like: (id: string) => api.post(`/posts/${id}/like`),
+  search: (query: string) => api.get(`/posts/search?q=${encodeURIComponent(query)}`),
+};
+
+export const uploadsApi = {
+  upload: async (file: File) => {
+    const fd = new FormData();
+    fd.append('file', file);
+
+    // Use fetch for multipart upload so we don't inherit axios default JSON header
+    const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+    const url = `${base}/uploads`;
+
+    const headers: Record<string, string> = {};
+    const token = authUtils.getToken();
+    if (token) headers['Authorization'] = `Bearer ${token}`;
+
+    const resp = await fetch(url, {
+      method: 'POST',
+      headers,
+      body: fd,
+    });
+
+    if (!resp.ok) {
+      const text = await resp.text();
+      const err: any = new Error('Upload failed');
+      try {
+        err.response = { data: JSON.parse(text) };
+      } catch (_) {
+        err.response = { data: { message: text } };
+      }
+      throw err;
+    }
+
+    return { data: await resp.json() };
+  },
+};
+
+export const commentsApi = {
+  getByPostId: (postId: string) => api.get(`/posts/${postId}/comments`),
+  create: (postId: string, content: string) =>
+    api.post(`/posts/${postId}/comments`, { content }),
+};
+
+export default api;
+
+
