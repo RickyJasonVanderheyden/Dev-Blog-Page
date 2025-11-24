@@ -48,8 +48,14 @@ app.use((err: any, req: express.Request, res: express.Response, next: express.Ne
 
 const PORT = parseInt(env.PORT, 10);
 
-app.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-  console.log(`📊 Environment: ${env.NODE_ENV}`);
-});
+// For Vercel deployment
+export default app;
+
+// For local development
+if (process.env.NODE_ENV !== 'production') {
+  app.listen(PORT, () => {
+    console.log(`🚀 Server running on http://localhost:${PORT}`);
+    console.log(`📊 Environment: ${env.NODE_ENV}`);
+  });
+}
 
