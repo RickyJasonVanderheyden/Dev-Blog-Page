@@ -32,7 +32,7 @@ export function PostEditor({
         label="Title"
         placeholder="Enter post title..."
         {...register('title', { required: 'Title is required' })}
-        error={errors.title?.message}
+        error={errors.title?.message as string}
       />
 
       <div>
@@ -51,25 +51,25 @@ export function PostEditor({
 
       <Textarea
         label="Excerpt"
-        placeholder="Brief summary of your post..."
+        placeholder="Write a brief description of your post..."
         rows={3}
         {...register('excerpt', { required: 'Excerpt is required' })}
-        error={errors.excerpt?.message}
+        error={errors.excerpt?.message as string}
       />
 
       <Textarea
         label="Content"
-        placeholder="Write your post content..."
-        rows={12}
+        placeholder="Write your post content here..."
+        rows={10}
         {...register('content', { required: 'Content is required' })}
-        error={errors.content?.message}
+        error={errors.content?.message as string}
       />
 
       <Input
         label="Tags (comma-separated)"
         placeholder="react, typescript, web development"
         {...register('tags')}
-        error={errors.tags?.message}
+        error={errors.tags?.message as string}
       />
 
       <div className="flex justify-end gap-3">

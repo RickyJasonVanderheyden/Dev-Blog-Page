@@ -47,7 +47,7 @@ export function EditProfileForm({ onSuccess }: EditProfileFormProps) {
     setSuccess('');
 
     try {
-      let updatedData = {
+      const updatedData = {
         username: data.username,
         email: data.email,
         avatar: user?.avatar, // Keep existing avatar initially

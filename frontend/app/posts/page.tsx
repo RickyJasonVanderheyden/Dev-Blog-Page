@@ -7,7 +7,6 @@ import { postsApi } from '@/lib/api';
 import { PostCard } from '@/components/PostCard';
 import { Loader } from '@/components/Loader';
 import { ErrorBox } from '@/components/ErrorBox';
-import { mockPosts } from '@/lib/mockData';
 import type { Post } from '@/lib/types';
 
 export default function PostsPage() {

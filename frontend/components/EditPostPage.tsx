@@ -31,10 +31,7 @@ export function EditPostPage({ postId }: { postId: string }) {
     setIsSaving(true);
     setErrorMessage('');
     try {
-      const tagsArray =
-        typeof data.tags === 'string'
-          ? data.tags.split(',').map((tag) => tag.trim()).filter(Boolean)
-          : data.tags;
+      const tagsArray = Array.isArray(data.tags) ? data.tags : [];
       const payload: any = {
         ...data,
         tags: tagsArray,
