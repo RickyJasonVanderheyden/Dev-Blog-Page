@@ -66,6 +66,34 @@ export const uploadsApi = {
 
     return { data: await resp.json() };
   },
+  
+  // Upload for registration (no auth required)
+  uploadForRegistration: async (file: File) => {
+    const fd = new FormData();
+    fd.append('file', file);
+
+    // Use fetch for multipart upload so we don't inherit axios default JSON header
+    const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
+    const url = `${base}/uploads/register`;
+
+    const resp = await fetch(url, {
+      method: 'POST',
+      body: fd,
+    });
+
+    if (!resp.ok) {
+      const text = await resp.text();
+      const err: any = new Error('Upload failed');
+      try {
+        err.response = { data: JSON.parse(text) };
+      } catch (_) {
+        err.response = { data: { message: text } };
+      }
+      throw err;
+    }
+
+    return { data: await resp.json() };
+  },
 };
 
 export const commentsApi = {

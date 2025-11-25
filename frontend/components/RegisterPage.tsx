@@ -34,7 +34,7 @@ export function RegisterPage() {
     // If avatar file provided, upload first
     if (avatarFile && avatarFile.length > 0) {
       try {
-        const uploadResp = await uploadsApi.upload(avatarFile[0]);
+        const uploadResp = await uploadsApi.uploadForRegistration(avatarFile[0]);
         registerData.avatar = uploadResp.data.url;
       } catch (uploadErr) {
         setError('Failed to upload avatar.');
