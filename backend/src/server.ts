@@ -17,6 +17,7 @@ app.use(cors({
     'https://blog-assignment-production.up.railway.app',
     'https://blog-assignment-pi.vercel.app'
   ],
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
 app.use(express.json());
