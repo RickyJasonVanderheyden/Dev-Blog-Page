@@ -8,6 +8,7 @@ import { useAuth } from '@/context/AuthContext';
 import { Button } from './Button';
 import { motion, AnimatePresence } from 'framer-motion';
 import { postsApi } from '@/lib/api';
+import { getStaticImageUrl } from '@/lib/imageUtils';
 import type { Post } from '@/lib/types';
 
 export function Navbar() {
@@ -133,9 +134,19 @@ export function Navbar() {
               <div className="relative">
                 <div className="w-10 h-10 rounded-xl shadow-xl group-hover:shadow-2xl transition-all duration-300 border-2 border-amber-600 overflow-hidden">
                   <img 
-                    src="http://localhost:3001/uploads/YP4VTpzwTSW8V8mXMKSQEQ.webp"
+                    src={getStaticImageUrl(
+                      'YP4VTpzwTSW8V8mXMKSQEQ.webp',
+                      'https://res.cloudinary.com/dwwjx5yd1/image/upload/v1764053161/YP4VTpzwTSW8V8mXMKSQEQ_tm1khi.webp'
+                    )}
                     alt="Logo"
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      // Fallback to a simple placeholder if image fails
+                      const target = e.target as HTMLImageElement;
+                      target.style.display = 'none';
+                      const parent = target.parentElement!;
+                      parent.innerHTML = '<div class="w-full h-full bg-amber-600 flex items-center justify-center text-white font-bold text-lg">D</div>';
+                    }}
                   />
                 </div>
                 <div className="absolute -inset-0.5 bg-gradient-to-br from-amber-600 to-orange-600 rounded-xl opacity-0 group-hover:opacity-30 transition-opacity duration-300 -z-10 blur-sm" />

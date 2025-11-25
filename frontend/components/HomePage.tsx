@@ -6,6 +6,7 @@ import { PostCard } from './PostCard';
 import { Loader, PostCardSkeleton } from './Loader';
 import { ErrorBox } from './ErrorBox';
 import { postsApi } from '@/lib/api';
+import { getStaticImageUrl } from '@/lib/imageUtils';
 import type { Post } from '@/lib/types';
 
 export function HomePage({ initialPosts }: { initialPosts?: Post[] }) {
@@ -38,7 +39,10 @@ export function HomePage({ initialPosts }: { initialPosts?: Post[] }) {
         <div 
           className="absolute inset-0 bg-cover bg-center bg-no-repeat"
           style={{
-            backgroundImage: 'url("http://localhost:3001/uploads/ian-schneider-TamMbr4okv4-unsplash.jpg")',
+            backgroundImage: `url("${getStaticImageUrl(
+              'ian-schneider-TamMbr4okv4-unsplash.jpg',
+              'https://res.cloudinary.com/dwwjx5yd1/image/upload/v1764053163/ian-schneider-TamMbr4okv4-unsplash_gcl7ff.jpg'
+            )}")`,
           }}
         />
         <div className="absolute inset-0 bg-black/20" />
