@@ -13,9 +13,7 @@ const app = express();
 app.use(cors({
   origin: [
     'http://localhost:3000',
-    'https://localhost:3000',
-    'https://blog-assignment-production.up.railway.app',
-    'https://blog-assignment-pi.vercel.app'
+    'https://blog-assignment-three-liart.vercel.app'
   ],
   methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
