@@ -13,13 +13,20 @@ export async function authMiddleware(
   next: NextFunction
 ) {
   try {
-    const authHeader = req.headers.authorization;
+    // Try to get token from cookie first, then fall back to Authorization header for backward compatibility
+    let token = req.cookies?.authToken;
+    
+    if (!token) {
+      const authHeader = req.headers.authorization;
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.substring(7);
+      }
+    }
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
+    if (!token) {
       return res.status(401).json({ message: 'Unauthorized' });
     }
 
-    const token = authHeader.substring(7);
     const payload = verifyToken(token);
 
     const user = await prisma.user.findUnique({

@@ -28,7 +28,7 @@ export function LoginPage() {
 
     try {
       const response = await authApi.login(data);
-      login(response.data.user, response.data.token);
+      login(response.data.user);
       router.push('/');
     } catch (err: any) {
       setError(

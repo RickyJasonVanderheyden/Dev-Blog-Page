@@ -2,13 +2,14 @@
 
 import React, { useEffect, useState, createContext, useContext } from 'react';
 import { authUtils } from '@/lib/auth';
+import { authApi } from '@/lib/api';
 import type { User } from '@/lib/types';
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
-  login: (user: User, token: string) => void;
-  logout: () => void;
+  login: (user: User) => void; // Token is no longer needed as it's in HTTP-only cookie
+  logout: () => Promise<void>;
   updateUser: (userData: User) => void;
 }
 
@@ -19,22 +20,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     const storedUser = authUtils.getUser();
-    // Respect explicit logout: if a logout flag exists, don't auto-login even when a token/user are present
+    // Respect explicit logout: if a logout flag exists, don't auto-login even when a user is present
     const logoutFlag = authUtils.getLogoutFlag();
     if (storedUser && authUtils.isAuthenticated() && !logoutFlag) {
       setUser(storedUser);
     }
   }, []);
 
-  const login = (userData: User, token: string) => {
-    authUtils.setToken(token);
+  const login = (userData: User) => {
+    // Token is handled by HTTP-only cookie set by server
     authUtils.setUser(userData);
     setUser(userData);
   };
 
-  const logout = () => {
-    authUtils.removeToken();
-    setUser(null);
+  const logout = async () => {
+    try {
+      // Call the logout API to clear the HTTP-only cookie
+      await authApi.logout();
+    } catch (error) {
+      // Even if the API call fails, we still want to clear local state
+      console.error('Logout API call failed:', error);
+    } finally {
+      // Clear local storage and state
+      authUtils.removeToken();
+      setUser(null);
+    }
   };
 
   const updateUser = (userData: User) => {

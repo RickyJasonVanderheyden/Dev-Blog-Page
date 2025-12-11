@@ -5,6 +5,7 @@ import { AuthProvider } from '@/context/AuthContext'
 import { QueryProvider } from '@/providers/QueryProvider'
 import { Navbar } from '@/components/Navbar'
 import { Footer } from '@/components/Footer'
+import { ChatWidget } from '@/components/ChatWidget'
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -36,6 +37,8 @@ export default function RootLayout({
                 {children}
               </main>
               <Footer />
+              
+              <ChatWidget />
             </div>
           </AuthProvider>
         </QueryProvider>

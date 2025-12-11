@@ -25,7 +25,17 @@ export async function register(req: Request, res: Response) {
   try {
     const validatedData = registerSchema.parse(req.body);
     const result = await registerUser(validatedData);
-    res.status(201).json(result);
+    
+    // Set HTTP-only cookie
+    res.cookie('authToken', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+    
+    // Return user data without token
+    res.status(201).json({ user: result.user });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({
@@ -41,7 +51,17 @@ export async function login(req: Request, res: Response) {
   try {
     const validatedData = loginSchema.parse(req.body);
     const result = await loginUser(validatedData);
-    res.json(result);
+    
+    // Set HTTP-only cookie
+    res.cookie('authToken', result.token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+    
+    // Return user data without token
+    res.json({ user: result.user });
   } catch (error: any) {
     if (error instanceof z.ZodError) {
       return res.status(400).json({
@@ -69,4 +89,18 @@ export async function updateProfileHandler(req: AuthRequest, res: Response) {
   }
 }
 
+export async function logout(req: Request, res: Response) {
+  try {
+    // Clear the HTTP-only cookie
+    res.clearCookie('authToken', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+    });
+    
+    res.json({ message: 'Logged out successfully' });
+  } catch (error: any) {
+    res.status(500).json({ message: 'Logout failed' });
+  }
+}
 

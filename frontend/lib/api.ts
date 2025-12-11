@@ -7,19 +7,13 @@ const api = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-});
-
-api.interceptors.request.use((config) => {
-  const token = authUtils.getToken();
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
+  withCredentials: true, // Enable sending cookies
 });
 
 export const authApi = {
   login: (credentials: LoginCredentials) => api.post('/auth/login', credentials),
   register: (data: RegisterData) => api.post('/auth/register', data),
+  logout: () => api.post('/auth/logout'),
   updateProfile: (data: { username?: string; email?: string; avatar?: string }) => 
     api.put('/auth/profile', data),
 };
@@ -43,14 +37,10 @@ export const uploadsApi = {
     const base = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
     const url = `${base}/uploads`;
 
-    const headers: Record<string, string> = {};
-    const token = authUtils.getToken();
-    if (token) headers['Authorization'] = `Bearer ${token}`;
-
     const resp = await fetch(url, {
       method: 'POST',
-      headers,
       body: fd,
+      credentials: 'include', // Include cookies for authentication
     });
 
     if (!resp.ok) {
@@ -100,6 +90,10 @@ export const commentsApi = {
   getByPostId: (postId: string) => api.get(`/posts/${postId}/comments`),
   create: (postId: string, content: string) =>
     api.post(`/posts/${postId}/comments`, { content }),
+};
+
+export const aiApi = {
+  chat: (message: string) => api.post('/ai/chat', { message }),
 };
 
 export default api;

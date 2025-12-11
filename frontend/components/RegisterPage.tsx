@@ -45,7 +45,7 @@ export function RegisterPage() {
 
     try {
       const response = await authApi.register(registerData);
-      login(response.data.user, response.data.token);
+      login(response.data.user);
       router.push('/');
     } catch (err: any) {
       setError(
